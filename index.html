@@ -1,67 +1,125 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Countdown für Prüfungen</title>
-  <link rel="stylesheet" href="css/css.css">
+  <title>ExamTime CountDown</title>
+  <meta charset="utf8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- css / js online -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> -->
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script> -->
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
+
+  <!-- css / js local -->
+  <link href="src/css/bootstrap-5.3.0.min.css" rel="stylesheet">
+  <link href="src/css/examCountDown.css" rel="stylesheet">
+  <link href="src/css/cover.css" rel="stylesheet">
+  <script type="text/javascript" src="src/js/bootstrap-5.3.0.min.js"></script>
+
+  <!--
+  jsPDF; 2.5.1
+  Copyright (c) 2010-2021 James Hall, https://github.com/MrRio/jsPDF (c) 2015-2021 yWorks GmbH, https://www.yworks.com/
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+
+  <!--
+  bootstrap; 5.3.0
+  The MIT License (MIT)
+
+  Copyright (c) 2011-2024 The Bootstrap Authors
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.-->
+
+
 </head>
-<body>
+<body data-bs-theme="dark">
+<body class="d-flex h-100 text-center text-white bg-dark">
 
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <header class="mb-auto">
+    <!-- <div>
+      <h3 class="float-md-start mb-0">Cover</h3>
+      <nav class="nav nav-masthead justify-content-center float-md-end">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+        <a class="nav-link" href="#">Features</a>
+        <a class="nav-link" href="#">Contact</a>
+      </nav>
+    </div> -->
+  </header>
 
-<div class="timer">
-  <div id="timer__license" class="timer__license">
+  <main class="px-3">
+    <h1 class="big-font-size display-1">
+      <div>
+        <span id="timer__desc_part_min">--</span>:<span id="timer__desc_part_sec">--</span>
+      </div>
+    </h1>
 
-    <a target="_blank" rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="CC BY NC 4.0" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a><br/><a href="https://www.twitter.com/Mr_DblH" target="_blank">Harald Hentschel</a>
-  </div>
-  <div class="center">
-    <div>
-      <h1 id="timer__title">Teil 1: Vortrag</h1>
-      <p>
-        <span id="timer__descr-1" class="timer__descr">10min +</span>
-        <span id="timer__descr" class="timer__descr"></span>
-        <span id="timer__descr-2" class="timer__descr">10min</span>
-      </p>
-    </div>
-    <div id="timer__settings_and_control">
-      <button id="timer__btn--control" type="button" class="timer__btn timer__btn--control timer__btn--start">
+    <!-- <p id="" class="lead">Cover</p> -->
+    <p style="margin: 50 0 50 0;" class="lead">
+      <!-- control buttons -->
+      <!-- rounded-circle p-1 -->
+      <button id="timer__btn-start-stop" style="margin: 0 5px;" class="btn btn-success">
         <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
-          <path d="M0 0h24v24H0z" fill="none"/>
           <path d="M8 5v14l11-7z" style="fill:white"/>
         </svg>
       </button>
-      <button id="timer__btn--skip" type="button" class="timer__btn timer__btn--skip">
+      <button id="timer__btn-refresh" style="margin: 0 5px;" class="btn btn-success">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 30 30" width="32">
+          <path d="M 15 3 C 12.031398 3 9.3028202 4.0834384 7.2070312 5.875 A 1.0001 1.0001 0 1 0 8.5058594 7.3945312 C 10.25407 5.9000929 12.516602 5 15 5 C 20.19656 5 24.450989 8.9379267 24.951172 14 L 22 14 L 26 20 L 30 14 L 26.949219 14 C 26.437925 7.8516588 21.277839 3 15 3 z M 4 10 L 0 16 L 3.0507812 16 C 3.562075 22.148341 8.7221607 27 15 27 C 17.968602 27 20.69718 25.916562 22.792969 24.125 A 1.0001 1.0001 0 1 0 21.494141 22.605469 C 19.74593 24.099907 17.483398 25 15 25 C 9.80344 25 5.5490109 21.062074 5.0488281 16 L 8 16 L 4 10 z" style="fill:white"/>
+        </svg>
+      </button>
+      <button id="timer__btn-skip" style="margin: 0 5px;" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
           <path d="M0 0h24v24H0z" fill="none"/>
           <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" style="fill:white"/>
         </svg>
       </button>
-      <button id="timer__btn--fullscreen" type="button" class="timer__btn timer__btn--fullscreen">
+      <button id="timer__btn-prefs" style="background-color: #444; margin: 0 5px;" class="btn btn-outline">
         <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
-          <path d="M5 5h5v2H7v3H5V5m9 0h5v5h-2V7h-3V5m3 9h2v5h-5v-2h3v-3m-7 3v2H5v-5h2v3h3Z" style="fill:white"/>
+          <path d="M24 13.616v-3.232c-1.651-.587-2.694-.752-3.219-2.019v-.001c-.527-1.271.1-2.134.847-3.707l-2.285-2.285c-1.561.742-2.433 1.375-3.707.847h-.001c-1.269-.526-1.435-1.576-2.019-3.219h-3.232c-.582 1.635-.749 2.692-2.019 3.219h-.001c-1.271.528-2.132-.098-3.707-.847l-2.285 2.285c.745 1.568 1.375 2.434.847 3.707-.527 1.271-1.584 1.438-3.219 2.02v3.232c1.632.58 2.692.749 3.219 2.019.53 1.282-.114 2.166-.847 3.707l2.285 2.286c1.562-.743 2.434-1.375 3.707-.847h.001c1.27.526 1.436 1.579 2.019 3.219h3.232c.582-1.636.75-2.69 2.027-3.222h.001c1.262-.524 2.12.101 3.698.851l2.285-2.286c-.744-1.563-1.375-2.433-.848-3.706.527-1.271 1.588-1.44 3.221-2.021zm-12 2.384c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4z" style="fill:white"/>
         </svg>
       </button>
-    </div>
-
-    <div class="timer__part">
-      <span id="timer__part--min" class="timer__part timer__part--min">00</span>
-      <span class="timer__part">:</span>
-      <span id="timer__part--sec" class="timer__part timer__part--sec">00</span>
-    </div>
-    <div id="timer__protocol" class="timer__protocol">
-      <p>
-        <span id="timer__protocol-left" class="timer__protocol timer__protocol-left">[</span>
-        <span id="timer__protocol-1" class="timer__protocol">START</span>
-        <span id="timer__protocol-dummy-1" class="timer__protocol timer__protocol-dummy">|</span>
-        <span id="timer__protocol-2" class="timer__protocol timer__protocol-uebergang">ÜBERGANG</span>
-        <span id="timer__protocol-dummy-2" class="timer__protocol timer__protocol-dummy">|</span>
-        <span id="timer__protocol-3" class="timer__protocol">ENDE</span>
-        <span id="timer__protocol-right" class="timer__protocol timer__protocol-right">]</span>
+      <button id="timer__btn-fullscreen" style="background-color: #444; margin: 0 5px;" class="btn btn-outline">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
+          <path d="M5 5h5v2H7v3H5V5m9 0h5v5h-2V7h-3V5m3 9h2v5h-5v-2h3v-3m-7 3v2H5v-5h2v3h3Z" style="fill: white"/>
+        </svg>
+      </button>
+    </p>
+    <p class="text-muted display-6">
+        <span id="timer__protocol-left" style="margin: 0 2px;" class="timer__protocol timer__protocol-left"></span>
+        <span id="timer__protocol-1" style="margin: 0 2px;" class="timer__protocol">--:--</span>
+        <span id="timer__protocol-dummy-1" style="margin: 0 2px;" class="timer__protocol timer__protocol-dummy">|</span>
+        <span id="timer__protocol-2" style="margin: 0 2px;" class="timer__protocol timer__protocol-uebergang">--:--</span>
+        <span id="timer__protocol-dummy-2" style="margin: 0 2px;" class="timer__protocol timer__protocol-dummy">|</span>
+        <span id="timer__protocol-3" style="margin: 0 2px;" class="timer__protocol">--:--</span>
+        <span id="timer__protocol-right" style="margin: 0 2px;" class="timer__protocol timer__protocol-right"></span>
       </p>
-    </div>
-  </div>
+  </main>
+
+  <footer class="mt-auto text-white-50">
+    <!-- <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p> -->
+  </footer>
 </div>
 
-<script src="js/timer.js"></script>
-
-</body>
+<script type="text/javascript" src="src/js/timer.js"></script>
 </html>
