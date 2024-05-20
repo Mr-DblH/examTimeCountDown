@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown für Prüfungen</title>
+  <link rel="stylesheet" href="css/css.css">
+</head>
+<body>
+
+
+<div class="timer">
+  <div id="timer__license" class="timer__license">
+    <a target="_blank" rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="CC BY NC 4.0" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a><br/><a href="https://www.twitter.com/Mr_DblH" target="_blank">Harald Hentschel</a>
+  </div>
+  <div class="center">
+    <div>
+      <h1 id="timer__title">Teil 1: Vortrag</h1>
+      <p>
+        <span id="timer__descr-1" class="timer__descr">10min +</span>
+        <span id="timer__descr" class="timer__descr"></span>
+        <span id="timer__descr-2" class="timer__descr">10min</span>
+      </p>
+    </div>
+    <div id="timer__settings_and_control">
+      <button id="timer__btn--control" type="button" class="timer__btn timer__btn--control timer__btn--start">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M8 5v14l11-7z" style="fill:white"/>
+        </svg>
+      </button>
+      <button id="timer__btn--skip" type="button" class="timer__btn timer__btn--skip">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" style="fill:white"/>
+        </svg>
+      </button>
+      <button id="timer__btn--fullscreen" type="button" class="timer__btn timer__btn--fullscreen">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32">
+          <path d="M5 5h5v2H7v3H5V5m9 0h5v5h-2V7h-3V5m3 9h2v5h-5v-2h3v-3m-7 3v2H5v-5h2v3h3Z" style="fill:white"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="timer__part">
+      <span id="timer__part--min" class="timer__part timer__part--min">00</span>
+      <span class="timer__part">:</span>
+      <span id="timer__part--sec" class="timer__part timer__part--sec">00</span>
+    </div>
+    <div id="timer__protocol" class="timer__protocol">
+      <p>
+        <span id="timer__protocol-left" class="timer__protocol timer__protocol-left">[</span>
+        <span id="timer__protocol-1" class="timer__protocol">START</span>
+        <span id="timer__protocol-dummy-1" class="timer__protocol timer__protocol-dummy">|</span>
+        <span id="timer__protocol-2" class="timer__protocol timer__protocol-uebergang">ÜBERGANG</span>
+        <span id="timer__protocol-dummy-2" class="timer__protocol timer__protocol-dummy">|</span>
+        <span id="timer__protocol-3" class="timer__protocol">ENDE</span>
+        <span id="timer__protocol-right" class="timer__protocol timer__protocol-right">]</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="js/timer.js"></script>
+
+</body>
+</html>
