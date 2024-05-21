@@ -1,5 +1,6 @@
 const pruefungszeit_je_teil_minutes = 10; // in min, Kommazahlen erlaubt
 const pruefungszeit_uebergang_minutes = 0.17; // in min => 15sec;
+const server_versatz = 0 // in h; 2 => +2h
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*
@@ -32,6 +33,8 @@ var is_pruefung_pausiert;
 var is_pruefung_done;
 var is_timer_running;
 var time = Math.ceil(pruefungszeit_je_teil_minutes * 60); // in sec
+
+let lock;
 
 
 // - - - - getElements - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -88,6 +91,7 @@ add_fullscreenchange_listeners()
 // timer
 // startet den timer
 function start_timer(){
+  request_wakelock();
   is_timer_running = true;
   set_timestamp_start();
   timer_start_stop_el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" width="32"><path d="M0 0h24v24H0z" fill="none"/><path d="M6 6h12v12H6z" style="fill:white"/></svg>`
@@ -101,6 +105,7 @@ function start_timer(){
 
 
 function stop_timer(){
+  release_wakelock();
   if (is_pruefung_done){
     // reset without protocol
     // change button to reset
@@ -117,8 +122,6 @@ function update_timer(){
   }
   if (pruefungsteil == 2 && is_pruefung_pausiert == false){
     document.body.classList.remove('background_pause');
-    set_timestamp_skip(); // ein zweites Mal
-    timer_protocol_2_el.innerHTML = get_current_time_as_string(timestamp_skip);
   }
   if  (time == 0 && pruefungsteil == 2 && is_pruefung_pausiert == false){
     // Ende der Prüfungszeit
@@ -145,6 +148,9 @@ function update_timer(){
     // zweiter Teil startet
     is_pruefung_pausiert = false;
     time = Math.ceil(pruefungszeit_je_teil_minutes * 60)
+    set_timestamp_skip();
+    timer_protocol_2_el.innerHTML = get_current_time_as_string(timestamp_skip);
+    console.log('2 false')
   }
   time--;
 }
@@ -238,6 +244,12 @@ function set_visibility_of_timer_fullscreen_button(){
 // gibt die aktuelle Uhrzeit als String hh:mm zurück
 // verrechnet auch die Überbrückungspause
 function get_current_time_as_string(date){
+  // https://stackoverflow.com/questions/85116/display-date-time-in-users-locale-format-and-time-offset
+  // .getTimezoneOffset() returns the time zone offset in minutes, .getTime() is in ms, hence the x 60000
+  // date_local_time = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  date_local_time = new Date(date.getTime() + server_versatz * 3600000); // h in ms
+  console.log(date_local_time.toString())
+  console.log(date.toString())
   if (is_pruefung_pausiert==false && pruefungsteil==2){
     // Prüfungsende fürs Protokoll; Pause rausrechnen
     var current = new Date();
@@ -246,10 +258,10 @@ function get_current_time_as_string(date){
       delta_start_end_fake_in_ms = pruefungszeit_je_teil_minutes*2*60000;
     }
     // console.log(delta_start_end_fake_in_ms);
-    date = new Date(timestamp_start.getTime() + delta_start_end_fake_in_ms); // 60000 millisecs per min
+    date_local_time = new Date(timestamp_start.getTime() + delta_start_end_fake_in_ms); // 60000 millisecs per min
   }
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
+  var hours = date_local_time.getHours();
+  var minutes = date_local_time.getMinutes();
   hours = hours<10 ? '0' + hours : hours;
   minutes = minutes<10 ? '0' + minutes : minutes;
   return hours + ":" + minutes
@@ -345,3 +357,19 @@ function reset_exam_done(){
   hide_dom(timer_start_stop_el);
 }
 
+
+// wake lock
+// https://davidwalsh.name/wake-lock-api
+//
+async function request_wakelock(){
+  try {
+    lock = await navigator.wakeLock.request('screen');
+  } catch (err) {
+    // Error or rejection
+    console.log('Wake Lock error: ', err);
+  }
+}
+
+async function release_wakelock(){
+  await lock.release();
+}

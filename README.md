@@ -51,6 +51,17 @@ Es wird Bootstrap für das Layout benutzt.
     Für diese Änderungen muss die ``timer.js`` in einem beliebigen Textedior geöffnet und bearbeitet werden.
     Die Übergangszeit  ist keine Pausenzeit für den Prüfling und kommt auch im Protokoll nicht vor. Aus diesem Grund ist dieser Wert für die Pausenzeit sinnvollerweise sehr niedrig zu wählen. Es soll dem Prüfling lediglich eine minimale Zeit für den Übergang in ein neues Thema oder ergänzende Fragen mit ggf. weiterem schriftlichem Input geben und damit für etwas Entspannung sorgen.
 
+- **Server Zeitversatz einstellen:**
+
+    Der Standardwert ist 0 Stunden, da meist die angezeigte Protokollzeit der lokalen Uhrzeit entspricht. Falls es Unstimmigkeiten geben sollte, lässt sich das in der ``timer.js``in mit der folgenden Zeile ändern:
+    ```html
+    const server_versatz = 0 // in h; 2 => +2h
+    ```
+
+- **Screen Wake Lock Api:**
+
+    Manche Browser unterstützen, dass der Bildschirm _nicht_ abgedunkelt wird und das Endgerät _nicht_ in den StandBy-Modus versetzt wird. Dies sollte lediglich dann erfolgen, wenn der Timer gestartet wurde. Leider scheint das noch nicht bei allen zuverlässig zu funktionieren. Aktuelle Implementierungen der Wake Lock Api können [auf caniuse.com](https://caniuse.com/wake-lock) nachgelesen werden. Abhilfe schaffen dann auch die Einstellungen geräteweit.
+
 
 ## Installation
 Das gitHub-Projekt clonen oder die zip-Datei herunterladen. Die zip-Datei entpacken und danach die ``index.html`` öffnen.
