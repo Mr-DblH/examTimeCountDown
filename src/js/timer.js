@@ -1,16 +1,20 @@
-const pruefungszeit_je_teil_minutes = 10; // in min, Kommazahlen erlaubt
-const pruefungszeit_uebergang_minutes = 0.17; // in min => 15sec;
-const server_versatz = 0 // in h; 2 => +2h
+var pruefungszeit_teil_1 = 10; // in min, Kommazahlen erlaubt
+var pruefungszeit_teil_2 = 10; // in min, Kommazahlen erlaubt
+var pruefungszeit_uebergang = 0.17; // in min => 10sec (0.17min);
+
+// nur für Kombiprüfung in BW; Infos unter RP-BW: https://t1p.de/8ee30
+//      Hinweis auf Übergang zum Nichtschwerpunkt-Fach
+//      wenn =0; dann _keine_ Zweiteilung des zweiten Prüfungsteils
+var pruefungszeit_teil_2_davon_teil_1 = 0; // in min, Kommazahlen erlaubt
+
+var server_versatz = 0 // in h; 2 => +2h
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*
-v2
-
-!!!
-Pausenzeit nicht größer als 0.5 Minuten wählen, da diese lediglich als Übergang
+Pausenzeit nicht größer als 0-0.5 Minuten wählen, da diese lediglich als Übergang
 gedacht ist und nicht als Pause in der Prüfung selbst. Diese Zeit wird am Ende
-für die Angabe der Prüfungszeit wieder "herausgerechnet", damit die Protokoll-
-daten bzw. -zeiten stimmen.
+für die Angabe der Protokoll-Prüfungszeit wieder "herausgerechnet",
+damit die Protokolldaten bzw. -zeiten stimmen.
 */
 
 /*
@@ -32,7 +36,8 @@ var pruefungsteil;
 var is_pruefung_pausiert;
 var is_pruefung_done;
 var is_timer_running;
-var time = Math.ceil(pruefungszeit_je_teil_minutes * 60); // in sec
+var time = Math.ceil(pruefungszeit_teil_1 * 60); // in sec
+var is_pruefung_zweigeteilt;
 
 let lock;
 
@@ -57,6 +62,7 @@ hide_dom(timer_prefs_el); // ToDo
 
 // - - - - setUp - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 reset_complete();
+set_is_pruefung_zweigeteilt();
 
 
 // - - - - eventListeners - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -101,6 +107,9 @@ function start_timer(){
   hide_dom(timer_prefs_el)
   timer_down = setInterval(update_timer, 1000);
   set_protocol_times();
+  // Transition erst jetzt setzen, damit beim (Neu-)Laden der Seite
+  // kein Flackern auftaucht
+  set_background_transition_property();
 }
 
 
@@ -117,20 +126,30 @@ function stop_timer(){
 }
 
 function update_timer(){
+  // zweiter Prüfungsteil beginnt _fast_: Übergang zum zweiten Teil
   if (pruefungsteil == 2 && is_pruefung_pausiert == true){
     document.body.classList.add('background_pause');
   }
+  // zweiter Prüfungsteil beginnt
   if (pruefungsteil == 2 && is_pruefung_pausiert == false){
     document.body.classList.remove('background_pause');
-  }
-  if  (time == 0 && pruefungsteil == 2 && is_pruefung_pausiert == false){
-    // Ende der Prüfungszeit
-    set_timestamp_end();
-    timer_protocol_3_el.innerHTML = get_current_time_as_string(timestamp_end);
-    is_pruefung_done = true;
-    stop_timer();
+    if (time <= 0){
+      // Ende der Prüfungszeit
+      set_timestamp_end();
+      timer_protocol_3_el.innerHTML = get_current_time_as_string(timestamp_end);
+      is_pruefung_done = true;
+      stop_timer();
+    }
+    // ist es eine zweigeteilte Prüfung im zweiten Teil?
+    // falls ja, ersten Teil markieren
+    if (time >= pruefungszeit_teil_2_davon_teil_1*60){
+      document.body.classList.add('background_zweigeteilt');
+    } else {
+      document.body.classList.remove('background_zweigeteilt');
+    }
   }
 
+  // Anzeige der aktuellen Countdown-Zeit
   let mins = Math.floor(time/60);
   let secs = time % 60;
 
@@ -140,17 +159,15 @@ function update_timer(){
   timer_desc_min_el.innerHTML = mins;
   timer_desc_sec_el.innerHTML = secs;
 
-  // time < 0: reset, get ready for part 2
+  // zweiter Prüfungsteil beginnt _gleich_: Übergang zum zweiten Teil
   if (time <= 0 && pruefungsteil == 1 && is_pruefung_pausiert == false){
     skip_to_part2()
   }
+  // zweiter Prüfungsteil beginnt; Pause vorbei
   if  (time <= 0 && pruefungsteil == 2 && is_pruefung_pausiert == true){
-    // zweiter Teil startet
     is_pruefung_pausiert = false;
-    time = Math.ceil(pruefungszeit_je_teil_minutes * 60)
-    set_timestamp_skip();
+    time = Math.ceil(pruefungszeit_teil_2 * 60)
     timer_protocol_2_el.innerHTML = get_current_time_as_string(timestamp_skip);
-    console.log('2 false')
   }
   time--;
 }
@@ -160,11 +177,11 @@ function skip_to_part2(){
   // erster Teil vorbei / vorzeitig abgebrochen
   // Mini-Pause startet
   is_pruefung_pausiert = true;
-  time = Math.round(pruefungszeit_uebergang_minutes * 60);
+  time = Math.round(pruefungszeit_uebergang * 60);
   pruefungsteil = 2;
 
   hide_dom(timer_skip_el);
-  // set_timestamp_skip();
+  set_timestamp_skip();
 }
 
 
@@ -172,10 +189,22 @@ timer_skip_el.addEventListener('click',
   function(){
     skip_to_part2();
     is_skipped = true;
-    // set_timestamp_skip();
   }
 )
 
+
+function set_is_pruefung_zweigeteilt(){
+  if (pruefungszeit_teil_2_davon_teil_1>0){
+    is_pruefung_zweigeteilt = true;
+  } else {
+    is_pruefung_zweigeteilt = false;
+  }
+  if (pruefungszeit_teil_2_davon_teil_1>=pruefungszeit_teil_2){
+    is_pruefung_zweigeteilt = false;
+    console.warn('Zweigeteilte Prüfung; Übergangszeit ist größer als die Gesamtzeit in Teil 2. Zweiteilung wird ignoriert.')
+  }
+  pruefungszeit_teil_2_davon_teil_1 = pruefungszeit_teil_2 - pruefungszeit_teil_2_davon_teil_1;
+}
 
 // - - - - fullscreen - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Vollbild - fullscreen
@@ -248,18 +277,8 @@ function get_current_time_as_string(date){
   // .getTimezoneOffset() returns the time zone offset in minutes, .getTime() is in ms, hence the x 60000
   // date_local_time = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   date_local_time = new Date(date.getTime() + server_versatz * 3600000); // h in ms
-  console.log(date_local_time.toString())
-  console.log(date.toString())
-  if (is_pruefung_pausiert==false && pruefungsteil==2){
-    // Prüfungsende fürs Protokoll; Pause rausrechnen
-    var current = new Date();
-    var delta_start_end_fake_in_ms = (timestamp_skip-timestamp_start) + (current-timestamp_skip);
-    if (delta_start_end_fake_in_ms>pruefungszeit_je_teil_minutes*2*60000){
-      delta_start_end_fake_in_ms = pruefungszeit_je_teil_minutes*2*60000;
-    }
-    // console.log(delta_start_end_fake_in_ms);
-    date_local_time = new Date(timestamp_start.getTime() + delta_start_end_fake_in_ms); // 60000 millisecs per min
-  }
+  // console.log("lokale Uhrzeit:" + date_local_time.toString())
+  // console.log("ausgeg. Uhrzeit:" + date.toString())
   var hours = date_local_time.getHours();
   var minutes = date_local_time.getMinutes();
   hours = hours<10 ? '0' + hours : hours;
@@ -286,35 +305,51 @@ function set_protocol_times(){
 // timestamps = dates
 function set_timestamp_start(){
   timestamp_start = new Date();
+  if (is_pruefung_zweigeteilt){
+    console.log("START (zweigeteilte Prüfungszeit in Teil 2):\n" + timestamp_start);
+  } else {
+    console.log("START:\n" + timestamp_start);
+  }
+
 }
 
 function set_timestamp_skip(){
   timestamp_skip = new Date();
+  if (timestamp_skip-timestamp_start>pruefungszeit_teil_1*60000){
+    timestamp_skip = new Date(timestamp_start.getTime() + pruefungszeit_teil_1*60000);
+  }
+  console.log("ZWEITER TEIL:\n" + timestamp_skip);
 }
 
 function set_timestamp_end(){
   timestamp_end = new Date();
+  if (timestamp_end-timestamp_skip>pruefungszeit_teil_2*60000){
+    timestamp_end = new Date(timestamp_skip.getTime() + pruefungszeit_teil_2*60000);
+  }
+  console.log("ENDE:\n" + timestamp_skip);
 }
 
 
 // - - - - display - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // setzt die Anzeige auf Ursprungsniveau - Ausgangsdaten
 function reset_timer_display(){
-  pruefungszeit_je_teil_minutes_checked = pruefungszeit_je_teil_minutes
+  pruefungszeit_teil_1_checked = pruefungszeit_teil_1;
   // check for integer
-  if (pruefungszeit_je_teil_minutes % 1 !== 0){
-    pruefungszeit_je_teil_minutes_checked = Math.floor(pruefungszeit_je_teil_minutes)
-    console.log(pruefungszeit_je_teil_minutes_checked)
+  if (pruefungszeit_teil_1 % 1 !== 0){
+    pruefungszeit_teil_1_checked = Math.floor(pruefungszeit_teil_1)
+    // console.log(pruefungszeit_je_teil_minutes_checked)
   }
-  if (pruefungszeit_je_teil_minutes_checked < 10) {
-    timer_desc_min_el.innerHTML = '0' + pruefungszeit_je_teil_minutes_checked;
-    if (pruefungszeit_je_teil_minutes_checked < 1){
+  // check for lower than 10min
+  if (pruefungszeit_teil_1_checked < 10) {
+    timer_desc_min_el.innerHTML = '0' + pruefungszeit_teil_1_checked;
+    if (pruefungszeit_teil_1_checked < 1){
       timer_desc_min_el.innerHTML = '00'
     }
   } else {
-    timer_desc_min_el.innerHTML = pruefungszeit_je_teil_minutes_checked;
+    timer_desc_min_el.innerHTML = pruefungszeit_teil_1_checked;
   }
-  sec_mod_60 = Math.ceil(((pruefungszeit_je_teil_minutes)*60) % 60)
+  // check for seconds; lower than 10
+  sec_mod_60 = Math.ceil(((pruefungszeit_teil_1)*60) % 60)
   if (sec_mod_60 < 10) {
     timer_desc_sec_el.innerHTML = '0' + sec_mod_60;
   } else {
@@ -322,7 +357,6 @@ function reset_timer_display(){
   }
 
 }
-
 
 function hide_dom(ele){
   ele.style.display = 'none';
@@ -332,14 +366,13 @@ function show_dom(ele){
   ele.style.removeProperty("display");
 }
 
-// - - - - display - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function reset_complete(){
   pruefungsteil = 0;
   is_pruefung_pausiert = false;
   is_pruefung_done = false;
   is_timer_running = false;
   is_skipped = false;
-  time = Math.ceil(pruefungszeit_je_teil_minutes * 60);
+  time = Math.ceil(pruefungszeit_teil_1 * 60);
   // display
   reset_protocol_times();
   reset_timer_display();
@@ -347,14 +380,23 @@ function reset_complete(){
   timer_start_stop_el.classList.add('btn-success');
   timer_start_stop_el.classList.remove('btn-danger');
   document.body.classList.remove('background_pause');
+  document.body.classList.remove('background_zweitgeteilt');
   hide_dom(timer_skip_el);
   // show_dom(timer_prefs_el);
 }
 
-
 function reset_exam_done(){
   show_dom(timer_refresh_el);
   hide_dom(timer_start_stop_el);
+}
+
+
+function set_background_transition_property(){
+  document.body.style.setProperty("-webkit-transition", "all .7s");
+  document.body.style.setProperty("-moz-transition", "all .7s");
+  document.body.style.setProperty("-ms-transition", "all .7s");
+  document.body.style.setProperty("-o-transition", "all .7s");
+  document.body.style.setProperty("transition", "all .7s");
 }
 
 

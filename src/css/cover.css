@@ -10,10 +10,14 @@
   max-width: 50em !important;
 }
 
+
 .background_pause{
   background-color: #023970 !important;
 }
 
+.background_zweigeteilt{
+  border: 20px solid #023970 !important;
+}
 
 /* Custom default button */
 .btn-secondary,
@@ -31,6 +35,13 @@
 body {
   text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
   box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+  border: 0px solid white;
+
+/*  -webkit-transition: all 0.5s linear;
+  -moz-transition: all 0.5s linear;
+  -ms-transition: all 0.5s linear;
+  -o-transition: all 0.5s linear;
+  transition: all 0.5 s linear;*/
 }
 
 .cover-container {

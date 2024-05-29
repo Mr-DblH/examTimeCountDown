@@ -41,26 +41,38 @@ Es wird Bootstrap für das Layout benutzt.
     Die Standardwerte sind
     -   10 Minuten für den ersten Teil,
     -   10 Sekunden Pause für einen Übergang,
-    -   10 Minuten für den zweiten Teil.
+    -   10 Minuten für den zweiten Teil. Dieser kann wiederum auf zwei Teile aufgeteilt werden.
 
-    Die Zeit des ersten Teils und des zweiten Teils können (derzeit) nicht getrennt voneinander gesteuert werden. Die Werte können in den ersten Zeilen der ``timer.js`` im Order ``js`` geändert werden:
+    Die Zeit des ersten Teils und des zweiten Teils können getrennt voneinander gesteuert werden. Die Werte können in den ersten Zeilen der ``timer.js`` im Order ``js`` geändert werden:
     ```html
-    const pruefungszeit_je_teil_minutes = 10; // in min
-    const pruefungszeit_uebergang_minutes = 0.25; // in min => 15sec;
+    var pruefungszeit_teil_1 = 10; // in min, Kommazahlen erlaubt
+    var pruefungszeit_teil_2 = 10; // in min, Kommazahlen erlaubt
     ```
-    Für diese Änderungen muss die ``timer.js`` in einem beliebigen Textedior geöffnet und bearbeitet werden.
+    Zusätzlich kann ein graphischer Rahmen für den ersten Teil im zweiten Prüfungsteil angezeigt werden: In Baden-Württemberg ist die für die Kombinations-Prüfung aus Gemeinschaftskunde und Geographie sinnvoll (vgl. [RP-BW, pdf](https://rp.baden-wuerttemberg.de/fileadmin/RP-Internet/Tuebingen/Abteilung_7/Fachberater/_DocumentLibraries/Documents/rpt_gk_abi-kombipruefung_2020-11.pdf)). Anzugeben ist die Zeit des ersten Teils, generell sind das etwa drei Minuten; Standard-Wert sind aber 0 Minuten:
+    ```html
+    var pruefungszeit_teil_2_davon_teil_1 = 0; // in min, Kommazahlen erlaubt
+    ```
+    Natürlich muss dieser Wert zwingend kleiner als der zugewiesene Wert für ```pruefungszeit_teil_2``` sein.
+
+    In der Zeile
+    ```html
+    var pruefungszeit_uebergang = 0.17; // in min => 10sec (0.17min);
+    ```
+    kann eine gewisse Übergangszeit eingestellt werden: Zeit für Orga, zum Durchatmen und für den Übergang in den zweiten Teil. Das Display zeigt einen blauen Hintergrund an.
+
+    Für diese Änderungen muss die ``timer.js`` in einem beliebigen Texteditor geöffnet und bearbeitet werden.
     Die Übergangszeit  ist keine Pausenzeit für den Prüfling und kommt auch im Protokoll nicht vor. Aus diesem Grund ist dieser Wert für die Pausenzeit sinnvollerweise sehr niedrig zu wählen. Es soll dem Prüfling lediglich eine minimale Zeit für den Übergang in ein neues Thema oder ergänzende Fragen mit ggf. weiterem schriftlichem Input geben und damit für etwas Entspannung sorgen.
 
 - **Server Zeitversatz einstellen:**
 
-    Der Standardwert ist 0 Stunden, da meist die angezeigte Protokollzeit der lokalen Uhrzeit entspricht. Falls es Unstimmigkeiten geben sollte, lässt sich das in der ``timer.js``in mit der folgenden Zeile ändern:
+    Der Standardwert ist 0 Stunden, da meist die angezeigte Protokollzeit der lokalen Uhrzeit entspricht. Falls es Unstimmigkeiten geben sollte, lässt sich das in der ``timer.js`` in mit der folgenden Zeile ändern:
     ```html
     const server_versatz = 0 // in h; 2 => +2h
     ```
 
 - **Screen Wake Lock Api:**
 
-    Manche Browser unterstützen, dass der Bildschirm _nicht_ abgedunkelt wird und das Endgerät _nicht_ in den StandBy-Modus versetzt wird. Dies sollte lediglich dann erfolgen, wenn der Timer gestartet wurde. Leider scheint das noch nicht bei allen zuverlässig zu funktionieren. Aktuelle Implementierungen der Wake Lock Api können [auf caniuse.com](https://caniuse.com/wake-lock) nachgelesen werden. Abhilfe schaffen dann auch die Einstellungen geräteweit.
+    Manche Browser unterstützen, dass der Bildschirm _nicht_ abgedunkelt wird und das Endgerät _nicht_ in den StandBy-Modus versetzt wird. Dies sollte lediglich dann erfolgen, wenn der Timer gestartet wurde. Leider scheint das noch nicht bei allen zuverlässig zu funktionieren. Aktuelle Implementierungen der Wake Lock Api können [auf caniuse.com](https://caniuse.com/wake-lock) nachgelesen werden. Abhilfe schaffen dann auch die Einstellungen am Geräte selbst (geräteweit).
 
 
 ## Installation
