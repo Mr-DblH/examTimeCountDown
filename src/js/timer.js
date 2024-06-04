@@ -142,7 +142,7 @@ function update_timer(){
     }
     // ist es eine zweigeteilte Prüfung im zweiten Teil?
     // falls ja, ersten Teil markieren
-    if (time >= pruefungszeit_teil_2_davon_teil_1*60){
+    if (is_pruefung_zweigeteilt && time >= pruefungszeit_teil_2_davon_teil_1*60){
       document.body.classList.add('background_zweigeteilt');
     } else {
       document.body.classList.remove('background_zweigeteilt');
@@ -166,7 +166,7 @@ function update_timer(){
   // zweiter Prüfungsteil beginnt; Pause vorbei
   if  (time <= 0 && pruefungsteil == 2 && is_pruefung_pausiert == true){
     is_pruefung_pausiert = false;
-    time = Math.ceil(pruefungszeit_teil_2 * 60)
+    time = Math.ceil(pruefungszeit_teil_2 * 60)+1
     timer_protocol_2_el.innerHTML = get_current_time_as_string(timestamp_skip);
   }
   time--;
@@ -380,7 +380,7 @@ function reset_complete(){
   timer_start_stop_el.classList.add('btn-success');
   timer_start_stop_el.classList.remove('btn-danger');
   document.body.classList.remove('background_pause');
-  document.body.classList.remove('background_zweitgeteilt');
+  document.body.classList.remove('background_zweigeteilt');
   hide_dom(timer_skip_el);
   // show_dom(timer_prefs_el);
 }
