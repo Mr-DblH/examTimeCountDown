@@ -3,7 +3,7 @@
 
 [![mastodon](https://img.shields.io/badge/@MrDoubleH-1DA1F2?style=flat&logo=Mastodon&logoColor=white)](https://mastodon.social/@MrDblH)
 
-## Inhalt
+## Überblick
 Es lässt sich Prüfungszeit für Prüfling und Prüfungskommision großflächig mit JavaScript und HTML/CSS anzeigen. Es wird (lokal) eine ``index.html``-Datei zur Verfügung gestellt, die die Prüfungszeit _ohne Werbung_ und _ohne weitere unnötige Anzeigen_ auch im Vollbild anzeigen kann. An den meisten Smartphones nutzbar, da responsive programmiert.
 
 Im Javascript-Code sind 2x10 Minuten hinterlegt: Zehn Minuten für den ersten Teil einer Prüfung, meist für einen Vortrag. Dann folgen (hinterlegte) etwa 10 Sekunden für den Übergang zum zweiten Teil, der wiederum zehn Minuten dauert und meist als Kolloquium gestaltet ist.
@@ -34,7 +34,7 @@ Es wird Bootstrap für das Layout benutzt.
 
 - **flugzeugmoduskompatibel**
 
-    Jegliche Dateien wie Icons oder Funktionalitäten sind offline verfügbar und müssen weder vor- noch nachgeladen werden: kein Datenfluss zu googlefonts oder anderen JavaScript-Dateien, keine Tracking jeglicher Art.
+    Jegliche Dateien wie Icons oder Funktionalitäten sind offline verfügbar und müssen weder vor- noch nachgeladen werden: kein Datenfluss zu googlefonts oder anderen JavaScript-Dateien, kein Tracking jeglicher Art.
 
 - **Zeiten ändern:**
 
@@ -72,11 +72,11 @@ Es wird Bootstrap für das Layout benutzt.
 
 - **Screen Wake Lock Api:**
 
-    Manche Browser unterstützen, dass der Bildschirm _nicht_ abgedunkelt wird und das Endgerät _nicht_ in den StandBy-Modus versetzt wird. Dies sollte lediglich dann erfolgen, wenn der Timer gestartet wurde. Leider scheint das noch nicht bei allen zuverlässig zu funktionieren. Aktuelle Implementierungen der Wake Lock Api können [auf caniuse.com](https://caniuse.com/wake-lock) nachgelesen werden. Abhilfe schaffen dann auch die Einstellungen am Geräte selbst (geräteweit).
+    Manche Browser unterstützen, dass der Bildschirm _nicht_ abgedunkelt wird und das Endgerät _nicht_ in den StandBy-Modus versetzt wird. Dies sollte lediglich dann erfolgen, wenn der Timer gestartet wurde. Leider scheint das noch nicht bei allen zuverlässig zu funktionieren. Aktuelle Implementierungen der Wake Lock Api können auf [caniuse.com](https://caniuse.com/wake-lock) nachgelesen werden. Abhilfe schaffen dann auch die Einstellungen am Geräte selbst (geräteweit).
 
 
 ## Installation
-Das gitHub-Projekt clonen oder die zip-Datei herunterladen. Die zip-Datei entpacken und danach die ``index.html`` öffnen.
+Das gitHub-Projekt clonen oder die zip-Datei herunterladen. Die zip-Datei entpacken und danach die ``index.html`` öffnen. Das Projekt ist [hier](https://github.com/Mr-DblH/examTimeCountDown) zu finden. Alternativ kann unter [ExamTime1](https://www.mrdblh.de/apps/examTime/) (2x 10min) und unter [ExamTime2](https://www.mrdblh.de/apps/examTime2/) (1x (3min+7min), 1x10min; Kombiprüfung)
 
 
 ## Lizenz und Haftung
